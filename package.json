@@ -1,5 +1,5 @@
 {
-  "name": "winston-azure-table",
+  "name": "winston-azure-data-tables",
   "version": "0.0.1",
   "description": "winston transport for azure table storage",
   "keywords": [
