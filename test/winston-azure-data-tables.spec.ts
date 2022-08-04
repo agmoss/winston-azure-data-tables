@@ -1,9 +1,9 @@
 import "jest";
-import { winstonAzureTable } from "../lib";
+import { winstonAzureDataTables } from "../lib";
 import winston from "winston";
 
-describe("winston-azure-table", () => {
-    const transport = winstonAzureTable({
+describe("winston-azure-data-tables", () => {
+    const transport = winstonAzureDataTables({
         account: {
             key: process.env.ACCOUNT_KEY || "",
             name: process.env.ACCOUNT_NAME || "",
@@ -13,7 +13,7 @@ describe("winston-azure-table", () => {
     });
 
     it("name and key options", () => {
-        const azBlob = winstonAzureTable({
+        const azBlob = winstonAzureDataTables({
             account: {
                 name: process.env.ACCOUNT_NAME || "",
                 key: process.env.ACCOUNT_KEY || "",

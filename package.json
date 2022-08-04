@@ -9,13 +9,13 @@
     "table",
     "log"
   ],
-  "homepage": "https://github.com/agmoss/winston-azure-table#readme",
+  "homepage": "https://github.com/agmoss/winston-azure-data-tables#readme",
   "bugs": {
-    "url": "https://github.com/agmoss/winston-azure-table/issues"
+    "url": "https://github.com/agmoss/winston-azure-data-tables/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agmoss/winston-azure-table.git"
+    "url": "git+https://github.com/agmoss/winston-azure-data-tables.git"
   },
   "license": "MIT",
   "author": "Andrew Moss",

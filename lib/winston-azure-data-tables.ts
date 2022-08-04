@@ -7,7 +7,7 @@ import {
 } from "@azure/data-tables";
 import { LogEntry } from "winston";
 
-const debug = Debug("winston-azure-table");
+const debug = Debug("winston-azure-data-tables");
 
 /**
  * Azure storage account credential variants
@@ -15,14 +15,17 @@ const debug = Debug("winston-azure-table");
  */
 type Account = { name: string; key: string };
 
-interface IWinstonAzureTable {
+interface IWinstonAzureDataTables {
     account: Account;
     azTableClient: TableClient;
     tableName: string;
     tablesUrl: string;
 }
 
-export class WinstonAzureTable extends Transport implements IWinstonAzureTable {
+export class WinstonAzureDataTables
+    extends Transport
+    implements IWinstonAzureDataTables
+{
     account!: {
         key: string;
         name: string;
@@ -34,10 +37,10 @@ export class WinstonAzureTable extends Transport implements IWinstonAzureTable {
 
     constructor(
         opts: Transport.TransportStreamOptions &
-            Pick<IWinstonAzureTable, "account" | "tableName" | "tablesUrl">
+            Pick<IWinstonAzureDataTables, "account" | "tableName" | "tablesUrl">
     ) {
         super(opts);
-        this.azTableClient = WinstonAzureTable.createAzTableClient(
+        this.azTableClient = WinstonAzureDataTables.createAzTableClient(
             opts.account,
             opts.tableName,
             opts.tablesUrl
@@ -82,6 +85,6 @@ export class WinstonAzureTable extends Transport implements IWinstonAzureTable {
     }
 }
 
-export const winstonAzureTable = (
-    opts: ConstructorParameters<typeof WinstonAzureTable>[0]
-) => new WinstonAzureTable(opts);
+export const winstonAzureDataTables = (
+    opts: ConstructorParameters<typeof WinstonAzureDataTables>[0]
+) => new WinstonAzureDataTables(opts);

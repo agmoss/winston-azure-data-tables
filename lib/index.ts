@@ -1,1 +1,1 @@
-export * from "./winston-azure-table";
+export * from "./winston-azure-data-tables";
