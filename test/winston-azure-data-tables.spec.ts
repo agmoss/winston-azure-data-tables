@@ -1,8 +1,10 @@
 import "jest";
 import { winstonAzureDataTables } from "../lib";
 import winston from "winston";
+// import { odata } from "@azure/data-tables";
 
 describe("winston-azure-data-tables", () => {
+    const strategy = () => new Date().toDateString();
     const transport = winstonAzureDataTables({
         account: {
             key: process.env.ACCOUNT_KEY || "",
@@ -11,7 +13,15 @@ describe("winston-azure-data-tables", () => {
         tableName: process.env.TABLE_NAME || "",
         tablesUrl: process.env.TABLES_URL || "",
         partitionKey: "1",
-        rowKeyStrategy: () => new Date().toISOString(),
+        rowKeyStrategy: strategy,
+    });
+
+    beforeAll(async () => {
+        await transport.azTableClient.createTable();
+    });
+
+    afterAll(async () => {
+        await transport.azTableClient.deleteTable();
     });
 
     it("name and key options", () => {
@@ -37,8 +47,11 @@ describe("winston-azure-data-tables", () => {
 
         logger.info(contents);
 
-        // TODO: Perform an actual assertion
-        const res = await Promise.resolve("Success");
-        expect(res).toBe("Success");
+        const f = await transport.azTableClient.getEntity(
+            transport.partitionKey,
+            strategy()
+        );
+
+        expect(f.message).toBe(JSON.stringify(contents));
     });
 });
