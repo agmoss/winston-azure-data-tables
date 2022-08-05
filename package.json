@@ -35,7 +35,8 @@
     "prepublish": "yarn run build",
     "release": "standard-version",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:dbg": "DEBUG='winston-azure-data-tables' jest --coverage"
   },
   "dependencies": {
     "@azure/data-tables": "^13.1.2",

@@ -10,6 +10,8 @@ describe("winston-azure-data-tables", () => {
         },
         tableName: process.env.TABLE_NAME || "",
         tablesUrl: process.env.TABLES_URL || "",
+        partitionKey: "1",
+        rowKeyStrategy: () => new Date().toISOString(),
     });
 
     it("name and key options", () => {
@@ -20,6 +22,8 @@ describe("winston-azure-data-tables", () => {
             },
             tableName: process.env.TABLE_NAME || "",
             tablesUrl: process.env.TABLES_URL || "",
+            partitionKey: "1",
+            rowKeyStrategy: () => new Date().toISOString(),
         });
         expect(azBlob.tableName).toBe(process.env.TABLE_NAME);
     });

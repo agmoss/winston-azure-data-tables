@@ -20,6 +20,8 @@ interface IWinstonAzureDataTables {
     azTableClient: TableClient;
     tableName: string;
     tablesUrl: string;
+    partitionKey: string;
+    rowKeyStrategy: () => string; // TODO: Default this to date string or something like that
 }
 
 export class WinstonAzureDataTables
@@ -34,10 +36,19 @@ export class WinstonAzureDataTables
     azTableClient: TableClient;
     tableName: string;
     tablesUrl: string;
+    partitionKey: string;
+    rowKeyStrategy: () => string;
 
     constructor(
         opts: Transport.TransportStreamOptions &
-            Pick<IWinstonAzureDataTables, "account" | "tableName" | "tablesUrl">
+            Pick<
+                IWinstonAzureDataTables,
+                | "account"
+                | "tableName"
+                | "tablesUrl"
+                | "partitionKey"
+                | "rowKeyStrategy"
+            >
     ) {
         super(opts);
         this.azTableClient = WinstonAzureDataTables.createAzTableClient(
@@ -47,6 +58,8 @@ export class WinstonAzureDataTables
         );
         this.tableName = opts.tableName;
         this.tablesUrl = opts.tablesUrl;
+        this.partitionKey = opts.partitionKey;
+        this.rowKeyStrategy = opts.rowKeyStrategy;
     }
 
     static createAzTableClient(
@@ -66,8 +79,10 @@ export class WinstonAzureDataTables
         const entity: TableEntity<LogEntry> = {
             level: info.level,
             message: JSON.stringify(info.message), // EDM's cannot be objects
-            partitionKey: "1", // TODO: Create partition strategy
-            rowKey: new Date().toISOString(), // TODO: Create row strategy
+            partitionKey: this.partitionKey,
+            rowKey: this.rowKeyStrategy(),
+            createdAt: new Date(),
+            // TODO: Add API for additional metadata
         };
 
         this.azTableClient
