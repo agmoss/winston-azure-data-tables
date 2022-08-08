@@ -62,42 +62,52 @@ export class WinstonAzureDataTables
         this.rowKeyStrategy = opts.rowKeyStrategy;
     }
 
-    static createAzTableClient(
+    static createAzTableClient = (
         accountInfo: Account,
         tableName: string,
         tablesUrl: string
-    ) {
+    ) => {
         return new TableClient(
             tablesUrl,
             tableName,
             new AzureNamedKeyCredential(accountInfo.name, accountInfo.key)
         );
-    }
+    };
 
-    override log(info: LogEntry, next: () => void) {
+    /**
+     * EDM's cannot be objects
+     */
+    static serializeValues = (info: LogEntry): LogEntry => {
+        Object.keys(info).forEach((key) => {
+            if (typeof info[key] === "object") {
+                info[key] = JSON.stringify(info[key]);
+            }
+        });
+
+        return info;
+    };
+
+    override log = async (info: LogEntry, next: () => void) => {
         debug(info);
+
+        WinstonAzureDataTables.serializeValues(info);
+
         const entity: TableEntity<LogEntry> = {
-            level: info.level,
-            message: JSON.stringify(info.message), // EDM's cannot be objects
+            ...info,
+            createdAt: new Date(),
             partitionKey: this.partitionKey,
             rowKey: this.rowKeyStrategy(),
-            createdAt: new Date(),
             // TODO: Add API for additional metadata
         };
 
-        this.azTableClient
-            .createEntity(entity)
-            .then((resp) => {
-                this.emit("logged", info);
-                debug(resp);
-                next();
-            })
-            .catch((e) => {
-                this.emit("error", e);
-                debug(e);
-                next();
-            });
-    }
+        try {
+            await this.azTableClient.createEntity(entity);
+        } catch (e) {
+            debug(e);
+        } finally {
+            next();
+        }
+    };
 }
 
 export const winstonAzureDataTables = (
